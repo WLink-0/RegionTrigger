@@ -10,6 +10,7 @@ using TerrariaApi.Server;
 using Terraria;
 using TShockAPI;
 using TShockAPI.Hooks;
+using TShockAPI.Models.PlayerUpdate;
 
 namespace RegionTrigger
 {
@@ -180,7 +181,7 @@ namespace RegionTrigger
 			if (rt?.HasEvent(Event.Itemban) != true)
 				return;
 
-			BitsByte control = args.Control;
+			/*BitsByte control = args.Control;
 			if (control[5])
 			{
 				var itemName = ply.TPlayer.inventory[args.Item].Name;
@@ -190,6 +191,19 @@ namespace RegionTrigger
 					args.Control = control;
 					ply.Disable($"using a banned item ({itemName})", DisableFlags.WriteToLogAndConsole);
 					ply.SendErrorMessage($"You can't use {itemName} here.");
+				}
+			}*/
+
+			ControlSet control = args.Control;
+			if (control.bitsbyte[5])
+			{
+				string name = ply.TPlayer.inventory[(int)args.SelectedItem].Name;
+				if (rt.ItemIsBanned(name) && !ply.HasPermission("regiontrigger.bypass.itemban"))
+				{
+					control.bitsbyte[5] = false;
+					args.Control = control;
+					ply.Disable("using a banned item (" + name + ")", DisableFlags.WriteToLogAndConsole);
+					ply.SendErrorMessage("You can't use " + name + " here.");
 				}
 			}
 		}
@@ -207,7 +221,7 @@ namespace RegionTrigger
 				return;
 
 			if (rt.HasPermission(args.Permission) && !args.Player.HasPermission("regiontrigger.bypass.tempperm"))
-				args.Handled = true;
+				args.Result = PermissionHookResult.Denied;
 		}
 
 		private static void OnRegionLeft(TSPlayer player, RtRegion region, RtPlayer data)
@@ -311,7 +325,7 @@ namespace RegionTrigger
 
 			if (rt.HasEvent(Event.Private) && !player.HasPermission("regiontrigger.bypass.private"))
 			{
-				player.Spawn();
+				player.Spawn(PlayerSpawnContext.SpawningIntoWorld);
 				player.SendErrorMessage("You don't have permission to enter that region.");
 			}
 		}
@@ -469,7 +483,7 @@ namespace RegionTrigger
 							}
 							else if (items.Count > 1)
 							{
-								TShock.Utils.SendMultipleMatchError(args.Player, items.Select(i => i.Name));
+								args.Player.SendMultipleMatchError(items.Select(i => i.Name));
 							}
 							else
 							{
