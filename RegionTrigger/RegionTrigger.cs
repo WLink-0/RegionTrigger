@@ -11,6 +11,7 @@ using Terraria;
 using TShockAPI;
 using TShockAPI.Hooks;
 using TShockAPI.Models.PlayerUpdate;
+using Terraria.ID;
 
 namespace RegionTrigger
 {
@@ -102,7 +103,7 @@ namespace RegionTrigger
 				dt.ForcePvP == false && args.Pvp ||
 				!dt.CanTogglePvP)
 			{
-				ply.SendErrorMessage("You can't change your PvP status in this region!");
+				ply.SendErrorMessage("No puedes cambiar tu estado de pvp en esta región");
 				ply.SendData(PacketTypes.TogglePvp, "", args.PlayerId);
 				args.Handled = true;
 			}
@@ -121,7 +122,7 @@ namespace RegionTrigger
 			if (rt.TileIsBanned(args.EditData) && !args.Player.HasPermission("regiontrigger.bypass.tileban"))
 			{
 				args.Player.SendTileSquare(args.X, args.Y, 1);
-				args.Player.SendErrorMessage("You do not have permission to place this tile.");
+				args.Player.SendErrorMessage("No tienes permiso para colocar este bloque.");
 				args.Handled = true;
 			}
 		}
@@ -151,7 +152,7 @@ namespace RegionTrigger
 				if (player == null || player.HasPermission("regiontrigger.bypass.itemdrop"))
 					return;
 
-				player.SendErrorMessage("You cannot drop item in this region!");
+				player.SendErrorMessage("No puedes soltar items en esta región.");
 				player.Disable("drop item");
 				args.Handled = true;
 			}
@@ -168,7 +169,7 @@ namespace RegionTrigger
 			if (rt.ProjectileIsBanned(args.Type) && !ply.HasPermission("regiontrigger.bypass.projban"))
 			{
 				ply.Disable($"Create banned projectile in region {rt.Region.Name}.", DisableFlags.WriteToLogAndConsole);
-				ply.SendErrorMessage("This projectile is banned here.");
+				ply.SendErrorMessage("Este proyectil no se puede usar aqui.");
 				ply.RemoveProjectile(args.Index, args.Owner);
 			}
 		}
@@ -203,7 +204,7 @@ namespace RegionTrigger
 					control.bitsbyte[5] = false;
 					args.Control = control;
 					ply.Disable("using a banned item (" + name + ")", DisableFlags.WriteToLogAndConsole);
-					ply.SendErrorMessage("You can't use " + name + " here.");
+					ply.SendErrorMessage("Aqui no puedes usar " + name);
 				}
 			}
 		}
@@ -229,7 +230,7 @@ namespace RegionTrigger
 			if (region.HasEvent(Event.LeaveMsg))
 			{
 				if (string.IsNullOrWhiteSpace(region.LeaveMsg))
-					player.SendInfoMessage("You have left region {0}", region.Region.Name);
+					player.SendInfoMessage("Has salido de la región {0}", region.Region.Name);
 				else
 					player.SendMessage(region.LeaveMsg, Color.White);
 			}
@@ -237,20 +238,20 @@ namespace RegionTrigger
 			if (region.HasEvent(Event.TempGroup) && player.tempGroup == region.TempGroup)
 			{
 				player.tempGroup = null;
-				player.SendInfoMessage("You are no longer in group {0}.", region.TempGroup.Name);
+				player.SendInfoMessage("Ya no estás en el grupo {0}.", region.TempGroup.Name);
 			}
 
 			if (region.HasEvent(Event.Godmode))
 			{
 				player.GodMode = false;
-				player.SendInfoMessage("You are no longer in godmode!");
+				player.SendInfoMessage("Ya no estás en modo dios");
 			}
 
 			if (region.HasEvent(Event.Pvp) || region.HasEvent(Event.NoPvp) || region.HasEvent(Event.InvariantPvp))
 			{
 				data.ForcePvP = null;
 				data.CanTogglePvP = true;
-				player.SendInfoMessage("You can toggle your PvP status now.");
+				player.SendInfoMessage("Ahora puedes cambiar tu estado de PVP.");
 			}
 		}
 
@@ -261,7 +262,7 @@ namespace RegionTrigger
 			if (rt.HasEvent(Event.EnterMsg))
 			{
 				if (string.IsNullOrWhiteSpace(rt.EnterMsg))
-					player.SendInfoMessage("You have entered region {0}", rt.Region.Name);
+					player.SendInfoMessage("Has entrado en la región {0}", rt.Region.Name);
 				else
 					player.SendMessage(rt.EnterMsg, Color.White);
 			}
@@ -278,20 +279,20 @@ namespace RegionTrigger
 				else
 				{
 					player.tempGroup = rt.TempGroup;
-					player.SendInfoMessage("Your group has been changed to {0} in this region.", rt.TempGroup.Name);
+					player.SendInfoMessage("Tu grupo se ha cambiado a {0} en esta región.", rt.TempGroup.Name);
 				}
 			}
 
 			if (rt.HasEvent(Event.Kill) && !player.HasPermission("regiontrigger.bypass.kill"))
 			{
 				player.KillPlayer();
-				player.SendInfoMessage("You were killed!");
+				player.SendInfoMessage("¡Has sido asesinado!");
 			}
 
 			if (rt.HasEvent(Event.Godmode))
 			{
 				player.GodMode = true;
-				player.SendInfoMessage("You are now in godmode!");
+				player.SendInfoMessage("Ahora estás en modo dios.");
 			}
 
 			if (rt.HasEvent(Event.Pvp) && !player.HasPermission("regiontrigger.bypass.pvp"))
@@ -302,7 +303,7 @@ namespace RegionTrigger
 					player.TPlayer.hostile = true;
 					player.SendData(PacketTypes.TogglePvp, "", player.Index);
 					TSPlayer.All.SendData(PacketTypes.TogglePvp, "", player.Index);
-					player.SendInfoMessage("Your PvP status is forced enabled in this region!");
+					player.SendInfoMessage("Tu estado de PVP se forzará a estar activo en esta región.");
 				}
 			}
 
@@ -314,7 +315,7 @@ namespace RegionTrigger
 					player.TPlayer.hostile = false;
 					player.SendData(PacketTypes.TogglePvp, "", player.Index);
 					TSPlayer.All.SendData(PacketTypes.TogglePvp, "", player.Index);
-					player.SendInfoMessage("You can't enable PvP in this region!");
+					player.SendInfoMessage("No puedes activar el PVP en esta región.");
 				}
 			}
 
@@ -326,7 +327,7 @@ namespace RegionTrigger
 			if (rt.HasEvent(Event.Private) && !player.HasPermission("regiontrigger.bypass.private"))
 			{
 				player.Spawn(PlayerSpawnContext.SpawningIntoWorld);
-				player.SendErrorMessage("You don't have permission to enter that region.");
+				player.SendErrorMessage("No tienes permiso para entrar a esta región.");
 			}
 		}
 
@@ -459,7 +460,7 @@ namespace RegionTrigger
 								args.Player.SendErrorMessage("Invalid events: {0}", invalids);
 							break;
 						case "pb":
-							if (short.TryParse(propValue, out var id) && id > 0 && id < Main.maxProjectileTypes)
+							if (short.TryParse(propValue, out var id) && id > 0 && id < 1022)
 							{
 								if (!isDel)
 								{
@@ -500,7 +501,7 @@ namespace RegionTrigger
 							}
 							break;
 						case "tb":
-							if (short.TryParse(propValue, out var tileid) && tileid >= 0 && tileid < Main.maxTileSets)
+							if (short.TryParse(propValue, out var tileid) && tileid >= 0 && tileid < TileID.Sets.AllTiles.Count())
 							{
 								if (!isDel)
 								{
