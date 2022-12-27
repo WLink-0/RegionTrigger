@@ -11,6 +11,7 @@ using Terraria;
 using TShockAPI;
 using TShockAPI.Hooks;
 using TShockAPI.Models.PlayerUpdate;
+using Terraria.ID;
 
 namespace RegionTrigger
 {
@@ -459,7 +460,7 @@ namespace RegionTrigger
 								args.Player.SendErrorMessage("Invalid events: {0}", invalids);
 							break;
 						case "pb":
-							if (short.TryParse(propValue, out var id) && id > 0 && id < Main.maxProjectileTypes)
+							if (short.TryParse(propValue, out var id) && id > 0 && id < 1022)
 							{
 								if (!isDel)
 								{
@@ -500,7 +501,7 @@ namespace RegionTrigger
 							}
 							break;
 						case "tb":
-							if (short.TryParse(propValue, out var tileid) && tileid >= 0 && tileid < Main.maxTileSets)
+							if (short.TryParse(propValue, out var tileid) && tileid >= 0 && tileid < TileID.Sets.AllTiles.Count())
 							{
 								if (!isDel)
 								{
