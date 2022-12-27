@@ -5,8 +5,8 @@ RegionTrigger is a **TShock-based** plugin aimed to trigger special events when 
 > 本插件有中文版本! 查看[中文教程][cn].. [下载链接][cndown]..
 
 ## Requirement:
-- API Version: 2.0
-- TShock Version: 4.3.22
+- API Version: 2.1
+- TShock Version: 5.1.3.0
 
 ## Commands:
 - `/rt set-<property> <region> [--del] <value>` -- *Sets regions*
