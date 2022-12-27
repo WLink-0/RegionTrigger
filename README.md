@@ -1,4 +1,4 @@
-# RegionTrigger for TShock
+# RegionTrigger for TShock traducido al español.
 
 RegionTrigger is a **TShock-based** plugin aimed to trigger special events when players enter a region.
 
